@@ -1,6 +1,7 @@
 package com.ntd.calculator.auth;
 
 import com.ntd.calculator.auth.dto.UserRequest;
+import com.ntd.calculator.auth.entity.User;
 import com.ntd.calculator.auth.service.AuthService;
 
 import jakarta.validation.Valid;
@@ -14,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 
@@ -44,16 +46,26 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> request) {
-        String username = request.get("username");
-        String password = request.get("password");
-
-        // Authenticate user (this is a simple example; you should validate with your UserService)
-        if ("testuser".equals(username) && "password".equals(password)) {
-            String token = jwtUtil.generateToken(username);
-            return ResponseEntity.ok(Map.of("token", token));
+    public ResponseEntity<?> login(@Valid @RequestBody UserRequest request) {
+        String username = request.getUsername();
+        String password = request.getPassword();
+    
+        // Validate input
+        if (username == null || password == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Username and password are required"));
         }
-
-        return ResponseEntity.status(401).body("Invalid credentials");
+    
+        // Authenticate user using UserService
+        Optional<User> user = authService.authenticate(username, password);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid credentials"));
+        }
+    
+        // Generate JWT token
+        String token = jwtUtil.generateToken(username);
+    
+        // Return token
+        return ResponseEntity.ok(Map.of("token", token));
     }
+    
 }
