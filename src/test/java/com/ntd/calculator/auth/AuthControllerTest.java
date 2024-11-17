@@ -64,6 +64,9 @@ class AuthControllerTest {
 
     @Test
     void testRegisterUserBadRequest() throws Exception {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
+
         String payload = """
                 {
                     "username": "",

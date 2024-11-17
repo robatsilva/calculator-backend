@@ -22,27 +22,25 @@ public class OperationServiceImpl implements OperationService {
     private UserRepository userRepository;
 
     @Autowired
-    private RecordService recordService; // Inject RecordService to handle record creation
+    private RecordService recordService;
 
     @Override
     public List<Operation> getAllOperations() {
-        return operationRepository.findByIsDeletedFalse(); // Fetch operations that are not logically deleted
+        return operationRepository.findByIsDeletedFalse();
     }
 
     @Override
     public Operation performOperation(String type, Double[] inputs, String username) throws Exception {
         if (inputs == null || inputs.length == 0) {
-            throw new IllegalArgumentException("Inputs are required."); // Validate inputs
+            throw new IllegalArgumentException("Inputs are required.");
         }
 
-        // Fetch user by username
         Optional<User> optionalUser = userRepository.findByUsername(username);
         if (optionalUser.isEmpty()) {
             throw new IllegalArgumentException("User not found.");
         }
         User user = optionalUser.get();
 
-        // Calculate the cost of the operation
         double cost = getOperationCost(type);
         if (user.getBalance() < cost) {
             throw new IllegalArgumentException("Insufficient balance.");
@@ -62,7 +60,13 @@ public class OperationServiceImpl implements OperationService {
         operationRepository.save(operation);
 
         // Create a record for the operation
-        recordService.createRecord(user, operation, inputs[0], user.getBalance(), String.valueOf(result));
+        Record record = new Record();
+        record.setUser(user);
+        record.setOperation(operation);
+        record.setAmount(inputs[0]);
+        record.setUserBalance(user.getBalance());
+        record.setOperationResponse(String.valueOf(result));
+        recordService.createRecord(record);
 
         return operation;
     }

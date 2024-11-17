@@ -4,6 +4,8 @@ import com.ntd.calculator.auth.entity.User;
 import com.ntd.calculator.operation.entity.Operation;
 import com.ntd.calculator.record.entity.Record;
 
+import jakarta.validation.Valid;
+
 public interface RecordService {
     /**
      * Creates a record for an operation.
@@ -15,5 +17,5 @@ public interface RecordService {
      * @param operationResponse The result or response of the operation.
      * @return The created record.
      */
-    Record createRecord(User user, Operation operation, Double amount, Double userBalance, String operationResponse);
+    Record createRecord(@Valid Record record);
 }

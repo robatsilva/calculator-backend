@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Data
@@ -16,20 +17,22 @@ public class Record {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "operation_id", nullable = false)
-    private Operation operation;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @NotNull(message = "User cannot be null.")
     private User user;
 
-    private Double amount;
-    private Double userBalance;
-    private String operationResponse;
-    private LocalDateTime date;
+    @ManyToOne
+    @NotNull(message = "Operation cannot be null.")
+    private Operation operation;
 
-    @PrePersist
-    protected void onCreate() {
-        this.date = LocalDateTime.now();
-    }
+    @NotNull(message = "Amount cannot be null.")
+    private Double amount;
+
+    @NotNull(message = "User balance cannot be null.")
+    private Double userBalance;
+
+    @NotNull(message = "Operation response cannot be null.")
+    private String operationResponse;
+
+    @NotNull(message = "Date cannot be null.")
+    private LocalDateTime date;
 }
