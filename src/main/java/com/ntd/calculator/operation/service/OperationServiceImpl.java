@@ -4,6 +4,8 @@ import com.ntd.calculator.auth.entity.User;
 import com.ntd.calculator.auth.repository.UserRepository;
 import com.ntd.calculator.operation.entity.Operation;
 import com.ntd.calculator.operation.repository.OperationRepository;
+import com.ntd.calculator.record.entity.Record;
+import com.ntd.calculator.record.service.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,43 +21,55 @@ public class OperationServiceImpl implements OperationService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RecordService recordService; // Inject RecordService to handle record creation
+
     @Override
     public List<Operation> getAllOperations() {
-        return operationRepository.findByIsDeletedFalse();
+        return operationRepository.findByIsDeletedFalse(); // Fetch operations that are not logically deleted
     }
 
     @Override
     public Operation performOperation(String type, Double[] inputs, String username) throws Exception {
         if (inputs == null || inputs.length == 0) {
-            throw new IllegalArgumentException("Inputs are required.");
+            throw new IllegalArgumentException("Inputs are required."); // Validate inputs
         }
 
+        // Fetch user by username
         Optional<User> optionalUser = userRepository.findByUsername(username);
         if (optionalUser.isEmpty()) {
             throw new IllegalArgumentException("User not found.");
         }
         User user = optionalUser.get();
 
+        // Calculate the cost of the operation
         double cost = getOperationCost(type);
         if (user.getBalance() < cost) {
             throw new IllegalArgumentException("Insufficient balance.");
         }
 
+        // Perform the calculation
         double result = calculateResult(type, inputs);
 
+        // Deduct the operation cost from the user's balance
         user.setBalance(user.getBalance() - cost);
         userRepository.save(user);
 
+        // Save the operation to the database
         Operation operation = new Operation();
         operation.setType(type);
         operation.setCost(cost);
         operationRepository.save(operation);
+
+        // Create a record for the operation
+        recordService.createRecord(user, operation, inputs[0], user.getBalance(), String.valueOf(result));
 
         return operation;
     }
 
     @Override
     public void deleteOperation(Long id) {
+        // Fetch the operation and perform a logical delete
         Operation operation = operationRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Operation not found."));
         operation.setIsDeleted(true);
@@ -63,6 +77,7 @@ public class OperationServiceImpl implements OperationService {
     }
 
     private double calculateResult(String type, Double[] inputs) throws Exception {
+        // Perform calculations based on the operation type
         switch (type.toLowerCase()) {
             case "addition":
                 return inputs[0] + inputs[1];
@@ -86,6 +101,7 @@ public class OperationServiceImpl implements OperationService {
     }
 
     private double getOperationCost(String type) {
+        // Define the cost for each operation type
         return switch (type.toLowerCase()) {
             case "addition", "subtraction" -> 1.0;
             case "multiplication" -> 2.0;
