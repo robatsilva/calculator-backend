@@ -47,22 +47,18 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UserRequest request) {
+        logger.info("entrou");
         String username = request.getUsername();
         String password = request.getPassword();
     
-        // Validate input
-        if (username == null || password == null) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Username and password are required"));
-        }
-    
         // Authenticate user using UserService
         Optional<User> user = authService.authenticate(username, password);
-        if (user == null) {
+        if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid credentials"));
         }
     
         // Generate JWT token
-        String token = jwtUtil.generateToken(username);
+        String token = jwtUtil.generateToken(user.get().getUsername());
     
         // Return token
         return ResponseEntity.ok(Map.of("token", token));
