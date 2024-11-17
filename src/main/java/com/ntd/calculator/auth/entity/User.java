@@ -1,9 +1,9 @@
 package com.ntd.calculator.auth.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -41,4 +41,7 @@ public class User {
     protected void onUpdate() {
         this.updatedAt = System.currentTimeMillis();
     }
+        
+    @Column(nullable = false)
+    private double balance; // User balance
 }

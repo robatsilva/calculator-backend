@@ -24,6 +24,8 @@ public class AuthService {
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         user.setStatus("active");
+        user.setBalance(100);
+
         return userRepository.save(user);
     }
 
