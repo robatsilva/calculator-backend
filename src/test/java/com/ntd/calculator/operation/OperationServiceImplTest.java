@@ -5,6 +5,8 @@ import com.ntd.calculator.auth.repository.UserRepository;
 import com.ntd.calculator.operation.entity.Operation;
 import com.ntd.calculator.operation.repository.OperationRepository;
 import com.ntd.calculator.operation.service.OperationServiceImpl;
+import com.ntd.calculator.record.service.RecordService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,6 +28,9 @@ class OperationServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private RecordService recordService;
 
     @InjectMocks
     private OperationServiceImpl operationService;
@@ -83,7 +88,7 @@ class OperationServiceImplTest {
         // Arrange
         User user = new User();
         user.setUsername("testuser");
-        user.setBalance(2.0);
+        user.setBalance(0);
 
         when(userRepository.findByUsername(eq("testuser"))).thenReturn(Optional.of(user));
 
