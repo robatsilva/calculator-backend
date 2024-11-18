@@ -9,6 +9,7 @@ import com.ntd.calculator.record.service.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,6 +67,7 @@ public class OperationServiceImpl implements OperationService {
         record.setAmount(inputs[0]);
         record.setUserBalance(user.getBalance());
         record.setOperationResponse(String.valueOf(result));
+        record.setDate(LocalDateTime.now());
         recordService.createRecord(record);
 
         return operation;
