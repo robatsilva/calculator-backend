@@ -35,4 +35,7 @@ public class Record {
 
     @NotNull(message = "Date cannot be null.")
     private LocalDateTime date;
+
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
 }
