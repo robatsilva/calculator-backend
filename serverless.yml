@@ -1,0 +1,19 @@
+functions:
+  login:
+    handler: auth.AuthHandler::handleRequest
+    events:
+      - http:
+          path: login
+          method: post
+  performOperation:
+    handler: operation.OperationHandler::handleRequest
+    events:
+      - http:
+          path: operations/perform
+          method: post
+  getUserRecords:
+    handler: record.RecordHandler::handleRequest
+    events:
+      - http:
+          path: records
+          method: get

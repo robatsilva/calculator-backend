@@ -1,0 +1,16 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  AuthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.ntd.auth.handler.AuthHandler::handleRequest
+      Runtime: java11
+      CodeUri: ./target/auth-0.0.1-SNAPSHOT.jar
+      MemorySize: 512
+      Timeout: 10
+      Events:
+        ApiGatewayEvent:
+          Type: Api
+          Properties:
+            Path: /auth
+            Method: POST
