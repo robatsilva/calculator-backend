@@ -44,14 +44,4 @@ public class OperationController {
             return ResponseEntity.status(500).body(Map.of("message", "Error processing operation"));
         }
     }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteOperation(@PathVariable Long id) {
-        try {
-            operationService.deleteOperation(id);
-            return ResponseEntity.ok("Operation deleted successfully.");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
 }
