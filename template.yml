@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.ntd.calculator.lambda.HelloWorld::handleRequest
+      Runtime: java11
+      CodeUri: target/calculator-0.0.1-SNAPSHOT-shaded.jar
+      MemorySize: 512
+      Timeout: 10
+      Policies:
+        - AWSLambdaBasicExecutionRole
