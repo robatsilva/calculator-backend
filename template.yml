@@ -1,13 +1,17 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Resources:
-  HelloWorldFunction:
+  StreamLambdaHandler:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: com.ntd.calculator.lambda.HelloWorld::handleRequest
-      Runtime: java11
-      CodeUri: target/calculator-0.0.1-SNAPSHOT-shaded.jar
+      Handler: com.ntd.calculator.StreamLambdaHandler::handleRequest
+      Runtime: java17
+      # CodeUri: ./target/calculator-0.0.1-SNAPSHOT-shaded.jar
+      CodeUri: ./
       MemorySize: 512
-      Timeout: 10
+      Timeout: 100
       Policies:
         - AWSLambdaBasicExecutionRole
+      Environment:
+        Variables:
+          SPRING_PROFILES_ACTIVE: default

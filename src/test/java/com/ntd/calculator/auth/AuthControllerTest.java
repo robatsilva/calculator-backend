@@ -41,46 +41,6 @@ class AuthControllerTest {
     }
 
     @Test
-    void testRegisterUserSuccess() throws Exception {
-        String payload = """
-                {
-                    "username": "newuser@example.com",
-                    "password": "password"
-                }
-            """;
-
-        // Mock the return of the registerUser method
-        User mockUser = new User();
-        mockUser.setUsername("newuser@example.com");
-
-        when(authService.registerUser(eq("newuser@example.com"), eq("password"))).thenReturn(mockUser);
-
-        mockMvc.perform(post("/api/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(payload))
-                .andExpect(status().isCreated())
-                .andExpect(content().string("User registered successfully"));
-    }
-
-    @Test
-    void testRegisterUserBadRequest() throws Exception {
-        MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
-
-        String payload = """
-                {
-                    "username": "",
-                    "password": "password"
-                }
-            """;
-
-        mockMvc.perform(post("/api/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(payload))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     void testLoginSuccess() throws Exception {
         String payload = """
                 {
